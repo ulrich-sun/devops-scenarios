@@ -4,17 +4,25 @@ on:
   push:
     branches: ["main"]
 
+# Explicit permissions to avoid any deprecated defaults
 permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write  # Needed for caching
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4  # Updated from v3
+        uses: actions/checkout@v4
+
+      # Clear any cached artifacts first
+      - name: Clean workspace
+        run: |
+          rm -rf _site/
+          rm -rf .jekyll-cache/
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -22,15 +30,29 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
+      # Alternative caching method
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            vendor/bundle
+            ~/.gem
+          key: ${{ runner.os }}-ruby-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-ruby-
+
       - name: Build with Jekyll
         run: |
+          bundle config set --local path 'vendor/bundle'
           bundle install
-          bundle exec jekyll build --baseurl "${{ github.base_ref }}"
+          bundle exec jekyll build --trace
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2  # Updated from v1
+      # Use the latest artifact upload method
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./_site
+          retention-days: 1  # Reduces storage usage
 
   deploy:
     needs: build
@@ -40,4 +62,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v3  # Updated from v2
+        uses: actions/deploy-pages@v3
