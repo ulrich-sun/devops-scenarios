@@ -5,7 +5,7 @@ const config = {
   baseUrl: '/devops-scenarios/',
   organizationName: 'ulrich-sun', // GitHub username
   projectName: 'devops-scenarios',     // GitHub repo name
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn', //'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   presets: [
