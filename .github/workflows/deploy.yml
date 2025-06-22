@@ -17,9 +17,10 @@ jobs:
         with:
           ruby-version: '3.0'  # Spécifiez la version Ruby si nécessaire
 
-      - name: Install Jekyll and Bundler
+      - name: Install dependencies
         run: |
-          gem install jekyll bundler
+          gem install bundler
+          bundle install  # Installe les dépendances définies dans Gemfile
 
       - name: Build the site
         run: |
