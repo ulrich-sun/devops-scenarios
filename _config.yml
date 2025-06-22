@@ -1,3 +1,4 @@
-title: Mon Site
-description: Un site généré avec Jekyll
-theme: jekyll-theme-cayman
+title: Mon Site Pro
+theme: minima
+plugins:
+  - jekyll-feed
